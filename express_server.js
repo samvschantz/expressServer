@@ -64,7 +64,8 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) =>{
   var shortURL = req.params.id
-  delete urlDatabase.shortURL
+  delete urlDatabase[shortURL]
+  res.redirect('http://localhost:8080/urls/')
 });
 
 app.listen(PORT, () => {
