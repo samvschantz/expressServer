@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <% include partials/_header %>
+  <title>TinyApp</title>
+</head>
+<body>
+  <h2>Loop</h2>
+    <ul>
+      <% for (var key in urls) { %>
+      <li><%= 'URL: ' + urls[key] + ' Key: ' + key %></li>
+      <% }; %>
+    </ul>
+  <a href>Shorten</a>
+</body>
+</html>
