@@ -62,6 +62,11 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.post("/urls/:id/delete", (req, res) =>{
+  var shortURL = req.params.id
+  delete urlDatabase.shortURL
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
