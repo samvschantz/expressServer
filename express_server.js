@@ -37,7 +37,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    username: req.cookies["userID"],
     urls: urlDatabase
   };
   //the object we are accessing in the loop is urls
@@ -45,7 +45,11 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["userID"],
+  };
+  console.log(req.cookies)
+  res.render("urls_new", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -62,14 +66,14 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username")
+  res.clearCookie("userID")
   res.redirect("http://localhost:8080/urls/")
 })
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id, urlDatabase,
-    username: req.cookies["username"],
+    username: req.cookies["userID"],
     };
   res.render("urls_show", templateVars);
 });
