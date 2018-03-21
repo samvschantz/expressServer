@@ -40,7 +40,6 @@ app.get("/urls", (req, res) => {
     username: req.cookies["username"],
     urls: urlDatabase
   };
-  console.log(req.cookies["username"])
   //the object we are accessing in the loop is urls
   res.render("urls_index", templateVars)
 });
@@ -61,6 +60,11 @@ app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[shortURL]
   res.redirect(longURL);
 });
+
+app.post("urls/logout", (req, res) => {
+  res.clearCookie("username", login)
+  res.redirect("http://localhost:8080/urls/")
+})
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
