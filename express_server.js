@@ -62,6 +62,9 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.post("/urls/:id", (req, res) => {
+})
+
 app.post("/urls/:id/delete", (req, res) =>{
   var shortURL = req.params.id
   delete urlDatabase[shortURL]
