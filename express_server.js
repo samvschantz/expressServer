@@ -61,8 +61,8 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.post("urls/logout", (req, res) => {
-  res.clearCookie("username", login)
+app.post("/logout", (req, res) => {
+  res.clearCookie("username")
   res.redirect("http://localhost:8080/urls/")
 })
 
