@@ -36,7 +36,11 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+  console.log(req.cookies["username"])
   //the object we are accessing in the loop is urls
   res.render("urls_index", templateVars)
 });
@@ -59,7 +63,10 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, urlDatabase };
+  let templateVars = {
+    shortURL: req.params.id, urlDatabase,
+    username: req.cookies["username"],
+    };
   res.render("urls_show", templateVars);
 });
 
@@ -72,7 +79,7 @@ app.post("/urls/:id", (req, res) => {
 app.post("/login", (req, res) =>{
   let login = req.body.login
   //already a string so good to go as a cookie
-  res.cookie(login)
+  res.cookie("username", login)
   res.redirect('http://localhost:8080/urls/')
 });
 
