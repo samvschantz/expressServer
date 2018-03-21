@@ -18,6 +18,19 @@ function generateRandomString() {
   return text;
 }
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
+
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -25,6 +38,26 @@ var urlDatabase = {
 
 app.get("/", (req, res) => {
   res.end("Hello!");
+});
+
+app.get("/register", (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("urls_register", templateVars)
+});
+
+app.post("/register", (req, res) => {
+  let userID = 'user' + generateRandomString()
+  console.log(req.body)
+  users[userID] = {
+    id: userID,
+    email: req.body.email,
+    password: req.body.password
+    };
+  console.log(users)
+  res.cookie("userID", userID)
+  res.redirect("http://localhost:8080/urls/")
 });
 
 app.get("/urls.json", (req, res) => {
