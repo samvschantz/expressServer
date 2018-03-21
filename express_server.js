@@ -42,23 +42,43 @@ app.get("/", (req, res) => {
 
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    username: req.cookies[users]
   };
   res.render("urls_register", templateVars)
 });
 
 app.post("/register", (req, res) => {
   let userID = 'user' + generateRandomString()
-  console.log(req.body)
-  users[userID] = {
-    id: userID,
-    email: req.body.email,
-    password: req.body.password
-    };
+  let password = req.body.password
+  let email = req.body.email
+  for (var person in users){
+    console.log(users[person]['email'])
+    if (users[person]['email'] === email){
+      console.log('Email match')
+      res.sendStatus(400)
+    } else if (users[person]['password'] === password){
+      console.log('Password match')
+      res.sendStatus(400)
+    }
+  };
+  // checks whether email or password field are filled in
+  if (!email || !password){
+    res.sendStatus(400)
+  } else {
+    users[userID] = {
+      id: userID,
+      email: email,
+      password: password
+  };
   console.log(users)
   res.cookie("userID", userID)
   res.redirect("http://localhost:8080/urls/")
+  };
 });
+
+// app.get("/login", (req, res) => {
+//   res.render("urls_login")
+// });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -70,7 +90,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    username: req.cookies[users],
     urls: urlDatabase
   };
   //the object we are accessing in the loop is urls
@@ -102,7 +122,7 @@ app.post("/logout", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id, urlDatabase,
-    username: req.cookies["username"],
+    username: req.cookies["users"],
     };
   res.render("urls_show", templateVars);
 });
