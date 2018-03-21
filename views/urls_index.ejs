@@ -10,10 +10,8 @@
       <% for (var key in urls) { %>
       <li><%= 'URL: ' + urls[key] + ' Key: ' + key %></li>
       <form method="POST" action='/urls/<%=key%>/delete'><button>Delete</button></form>
+      <form method="GET" action='/urls/<%=key%>'><button>Edit</button></form>
       <% }; %>
-    </ul>
-    <ul>
-      <form method="POST" action='/urls/<%=key%>'><button>Update</button></form>
     </ul>
   <a href>Shorten</a>
 </body>

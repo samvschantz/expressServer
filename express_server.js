@@ -44,11 +44,10 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
   var shortURL = generateRandomString()
   var longURL = req.body.longURL
   urlDatabase[shortURL] = longURL
-  res.redirect('http://localhost:8080/urls/' + shortURL);         // Respond with 'Ok' (we will replace this)
+  res.redirect('http://localhost:8080/urls/' + shortURL);
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -63,6 +62,9 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
+  let shortURL = req.params.id
+  let longURL = req.body.longURL
+  urlDatabase[shortURL] = longURL
 })
 
 app.post("/urls/:id/delete", (req, res) =>{

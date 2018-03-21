@@ -6,7 +6,11 @@
 </head>
 <body>
   <h2>Your URL:</h2>
-  <h4><%= 'Regular URL: ' +urlDatabase[shortURL] %></h4>
   <h4><%= ' Short URL: ' + shortURL %></h4>
+  <form action="/urls/<%=shortURL%>" method="POST" style="margin:150px;">
+    <label for="longURL">Update:</label>
+    <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+    <input type="submit" value="Submit">
+  </form>
 </body>
 </html>
