@@ -5,7 +5,7 @@
   <title>TinyApp</title>
 </head>
 <body>
-  <h2>Loop</h2>
+  <h2>Your URLs</h2>
     <ul>
       <% for (var key in urls) { %>
       <li><%= 'URL: ' + urls[key] + ' Key: ' + key %></li>
@@ -13,6 +13,8 @@
       <form method="GET" action='/urls/<%=key%>'><button>Edit</button></form>
       <% }; %>
     </ul>
-  <a href>Shorten</a>
+  <form action="http://localhost:8080/urls/new">
+        <button>Shorten a new URL</button>
+  </form>
 </body>
 </html>

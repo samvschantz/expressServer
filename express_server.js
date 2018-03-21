@@ -98,8 +98,12 @@ app.get("/urls/new", (req, res) => {
   let templateVars = {
     username: req.cookies["userID"],
   };
-  console.log(req.cookies)
-  res.render("urls_new", templateVars);
+  console.log(req.cookies["userID"])
+  if (req.cookies["userID"] === undefined){
+    res.redirect("http://localhost:8080/login")
+  } else {
+    res.render("urls_new", templateVars);
+  }
 });
 
 app.post("/urls", (req, res) => {
