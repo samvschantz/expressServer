@@ -1,1 +1,22 @@
 <!-- Header Partial -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <ul>
+      <% if (!username){%>
+      <form action="/login" method="POST" style="margin:10px;">
+        <input id="login" type="text" name="login" placeholder="username" style="width: 75px">
+          <label for="login">Login:</label>
+        <input type="submit" value="Submit">
+      </form>
+      <% } else { %>
+        <form action="/logout" method="POST" style="margin:10px;">
+          <button>Logout</button>
+        </form>
+      <% } %>
+      <%=username%>
+    </ul>
+</body>
+</html>

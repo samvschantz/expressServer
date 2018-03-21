@@ -3,6 +3,8 @@ var app = express();
 var PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
 
 app.set("view engine", "ejs");
 
@@ -34,7 +36,10 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
   //the object we are accessing in the loop is urls
   res.render("urls_index", templateVars)
 });
@@ -56,8 +61,16 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.post("urls/logout", (req, res) => {
+  res.clearCookie("username", login)
+  res.redirect("http://localhost:8080/urls/")
+})
+
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, urlDatabase };
+  let templateVars = {
+    shortURL: req.params.id, urlDatabase,
+    username: req.cookies["username"],
+    };
   res.render("urls_show", templateVars);
 });
 
@@ -65,7 +78,14 @@ app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id
   let longURL = req.body.longURL
   urlDatabase[shortURL] = longURL
-})
+});
+
+app.post("/login", (req, res) =>{
+  let login = req.body.login
+  //already a string so good to go as a cookie
+  res.cookie("username", login)
+  res.redirect('http://localhost:8080/urls/')
+});
 
 app.post("/urls/:id/delete", (req, res) =>{
   var shortURL = req.params.id
