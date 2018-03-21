@@ -67,7 +67,14 @@ app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id
   let longURL = req.body.longURL
   urlDatabase[shortURL] = longURL
-})
+});
+
+app.post("/login", (req, res) =>{
+  let login = req.body.login
+  //already a string so good to go as a cookie
+  res.cookie(login)
+  res.redirect('http://localhost:8080/urls/')
+});
 
 app.post("/urls/:id/delete", (req, res) =>{
   var shortURL = req.params.id
