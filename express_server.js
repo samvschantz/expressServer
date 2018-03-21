@@ -78,6 +78,7 @@ app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id
   let longURL = req.body.longURL
   urlDatabase[shortURL] = longURL
+  res.redirect("http://localhost:8080/urls/")
 });
 
 app.post("/login", (req, res) =>{
