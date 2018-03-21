@@ -52,12 +52,9 @@ app.post("/register", (req, res) => {
   let password = req.body.password
   let email = req.body.email
   for (var person in users){
-    console.log(users[person]['email'])
     if (users[person]['email'] === email){
-      console.log('Email match')
       res.sendStatus(400)
     } else if (users[person]['password'] === password){
-      console.log('Password match')
       res.sendStatus(400)
     }
   };
@@ -70,15 +67,14 @@ app.post("/register", (req, res) => {
       email: email,
       password: password
   };
-  console.log(users)
   res.cookie("userID", userID)
   res.redirect("http://localhost:8080/urls/")
   };
 });
 
-// app.get("/login", (req, res) => {
-//   res.render("urls_login")
-// });
+app.get("/login", (req, res) => {
+  res.render("urls_login")
+});
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
