@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
 
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: req.cookies[users]
+    username: req.cookies['userID']
   };
   res.render("urls_register", templateVars)
 });
@@ -86,9 +86,10 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {
-    username: req.cookies[users],
+    username: req.cookies['userID'],
     urls: urlDatabase
   };
+  console.log(req.cookies)
   //the object we are accessing in the loop is urls
   res.render("urls_index", templateVars)
 });
@@ -111,14 +112,14 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username")
+  res.clearCookie("userID")
   res.redirect("http://localhost:8080/urls/")
 })
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id, urlDatabase,
-    username: req.cookies["users"],
+    username: req.cookies['userID'],
     };
   res.render("urls_show", templateVars);
 });
@@ -131,9 +132,19 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) =>{
-  let login = req.body.login
-  //already a string so good to go as a cookie
-  res.cookie("username", login)
+  let userID = req.cookies.userID
+  let email = req.body.email
+  let password = req.body.password
+  let matchFound = false
+  for (var person in users){
+    if (users[person]['email'] === email && users[person]['password'] === password){
+      res.cookie("userID", users[person]['id'])
+      matchFound = true
+      }
+  };
+  if(matchFound === false){
+    res.sendStatus(400);
+  };
   res.redirect('http://localhost:8080/urls/')
 });
 
