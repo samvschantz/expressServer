@@ -32,8 +32,12 @@ const users = {
 }
 
 var urlDatabase = {
+  "userRandomID": {
+    "b2xVn2": "http://www.lighthouselabs.ca",
+  },
+ "user2RandomID": {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+ }
 };
 
 app.get("/", (req, res) => {
@@ -85,11 +89,12 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  let username = req.cookies['userID']
   let templateVars = {
     username: req.cookies['userID'],
-    urls: urlDatabase
+    urls: urlDatabase[username]
   };
-  console.log(req.cookies)
+  console.log('line 94: ' + username + urlDatabase[username])
   //the object we are accessing in the loop is urls
   res.render("urls_index", templateVars)
 });
@@ -98,7 +103,6 @@ app.get("/urls/new", (req, res) => {
   let templateVars = {
     username: req.cookies["userID"],
   };
-  console.log(req.cookies["userID"])
   if (req.cookies["userID"] === undefined){
     res.redirect("http://localhost:8080/login")
   } else {
@@ -107,9 +111,14 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  let userID = req.cookies.userID
   var shortURL = generateRandomString()
   var longURL = req.body.longURL
-  urlDatabase[shortURL] = longURL
+  if (urlDatabase[userID] === {}){
+    urlDatabase[userID] = { [shortURL] : longURL }
+  } else {
+    urlDatabase[userID][shortURL] = longURL
+  }
   res.redirect('http://localhost:8080/urls/' + shortURL);
 });
 
@@ -135,7 +144,8 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id
   let longURL = req.body.longURL
-  urlDatabase[shortURL] = longURL
+  let userID = req.cookies.userID
+  urlDatabase[userID][shortURL] = longURL
   res.redirect("http://localhost:8080/urls/")
 });
 
