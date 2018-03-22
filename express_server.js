@@ -6,6 +6,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
+const bcrypt = require('bcrypt');
+// const password = "purple-monkey-dinosaur"; // you will probably this from req.params
+// const hashedPassword = bcrypt.hashSync(password, 10);
+
 app.set("view engine", "ejs");
 
 function generateRandomString() {
@@ -53,8 +57,11 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let userID = 'user' + generateRandomString()
-  let password = req.body.password
+  let password = bcrypt.hashSync(req.body.password, 10);
   let email = req.body.email
+  // how comparesync works
+  // bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword); // returns true
+  // bcrypt.compareSync("pink-donkey-minotaur", hashedPassword); // returns false
   for (var person in users){
     if (users[person]['email'] === email){
       res.sendStatus(400)
@@ -72,7 +79,6 @@ app.post("/register", (req, res) => {
       password: password
     };
     urlDatabase[userID] = {}
-    console.log(urlDatabase)
     res.cookie("userID", userID)
     res.redirect("http://localhost:8080/urls/")
   };
@@ -96,7 +102,6 @@ app.get("/urls", (req, res) => {
     username: req.cookies['userID'],
     urls: urlDatabase[username]
   };
-  console.log('line 94: ' + username + urlDatabase[username])
   //the object we are accessing in the loop is urls
   res.render("urls_index", templateVars)
 });
@@ -117,14 +122,10 @@ app.post("/urls", (req, res) => {
   var shortURL = generateRandomString()
   var longURL = req.body.longURL
   if (urlDatabase[userID] === {}){
-    console.log('First condition ran')
     urlDatabase[userID] = { [shortURL] : longURL }
   } else {
-    console.log('Second condition ran')
     urlDatabase[userID][shortURL] = longURL
   }
-  console.log('line 122 ' + userID)
-  console.log('line 123. URL Database = ' + JSON.stringify(urlDatabase[userID]))
   res.redirect('http://localhost:8080/urls/' + shortURL);
 });
 
@@ -159,12 +160,12 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) =>{
-  let userID = req.cookies.userID
+  let userID = req.body.userID
   let email = req.body.email
   let password = req.body.password
   let matchFound = false
   for (var person in users){
-    if (users[person]['email'] === email && users[person]['password'] === password){
+    if (users[person]['email'] === email && bcrypt.compareSync(password, users[person]['password'])){
       res.cookie("userID", users[person]['id'])
       matchFound = true
       }
