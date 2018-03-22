@@ -34,10 +34,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = {
-    username: req.session.userID,
-    email: ''
-  };
+  let templateVars = users
   res.render("urls_register", templateVars)
 });
 
@@ -80,28 +77,13 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (req.session.userID === null){
-    let templateVars = {
-    username: undefined,
-    urls: undefined,
-    email: undefined
-    }
-  } else {
-    let templateVars = {
-    username: username,
-    urls: urlDatabase[username],
-    email: users[username]['email']
-    }
-  }
+  let templateVars = users
   res.render("urls_index", templateVars)
 });
 
 app.get("/urls/new", (req, res) => {
   let username = req.session.userID
-  let templateVars = {
-    username: req.session.userID,
-    email: users[username]['email']
-  };
+  let templateVars = users
   if (req.session.userID === undefined){
     res.redirect("http://localhost:8080/login")
   } else {
@@ -114,16 +96,10 @@ app.post("/urls", (req, res) => {
   var shortURL = generateRandomString()
   var longURL = req.body.longURL
   if (urlDatabase[userID] === {}){
-    console.log('First condition ran')
     urlDatabase[userID] = { [shortURL] : longURL }
   } else {
-    console.log('Second condition ran')
-    console.log('this is the userID ' + userID)
-    console.log(urlDatabase)
     urlDatabase[userID][shortURL] = longURL
   }
-  console.log('line 122 ' + userID)
-  console.log('line 123. URL Database = ' + JSON.stringify(urlDatabase[userID]))
   res.redirect('http://localhost:8080/urls/' + shortURL);
 });
 
@@ -136,17 +112,13 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  req.session.userID = null
+
   res.redirect("http://localhost:8080/urls/")
 })
 
 app.get("/urls/:id", (req, res) => {
   var username = req.session.userID
-  let templateVars = {
-    shortURL: req.params.id, urlDatabase,
-    username: username,
-    email: users[username]['email']
-    };
+  let templateVars = users
   res.render("urls_show", templateVars);
 });
 
@@ -164,7 +136,7 @@ app.post("/login", (req, res) =>{
   let password = req.body.password
   let matchFound = false
   for (var person in users){
-    if (users[person]['email'] === email && users[person]['password'] === password){
+    if (users[person]['email'] === email && bcrypt.compareSync(password, users[person]['password']){
       req.session.userID = users[person]['id']
       matchFound = true
       }
