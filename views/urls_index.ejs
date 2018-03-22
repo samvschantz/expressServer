@@ -5,6 +5,7 @@
   <title>TinyApp</title>
 </head>
 <body>
+  <% if (username !== undefined){ %>
   <h2>Your URLs</h2>
     <ul>
       <% for (var key in urls) { %>
@@ -16,5 +17,8 @@
   <form action="http://localhost:8080/urls/new">
         <button>Shorten a new URL</button>
   </form>
+  <% } else { %>
+  <h1>Register or login to shorten URLs!</h1>
+  <% } %>
 </body>
 </html>

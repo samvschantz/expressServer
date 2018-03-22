@@ -70,9 +70,11 @@ app.post("/register", (req, res) => {
       id: userID,
       email: email,
       password: password
-  };
-  res.cookie("userID", userID)
-  res.redirect("http://localhost:8080/urls/")
+    };
+    urlDatabase[userID] = {}
+    console.log(urlDatabase)
+    res.cookie("userID", userID)
+    res.redirect("http://localhost:8080/urls/")
   };
 });
 
@@ -115,10 +117,14 @@ app.post("/urls", (req, res) => {
   var shortURL = generateRandomString()
   var longURL = req.body.longURL
   if (urlDatabase[userID] === {}){
+    console.log('First condition ran')
     urlDatabase[userID] = { [shortURL] : longURL }
   } else {
+    console.log('Second condition ran')
     urlDatabase[userID][shortURL] = longURL
   }
+  console.log('line 122 ' + userID)
+  console.log('line 123. URL Database = ' + JSON.stringify(urlDatabase[userID]))
   res.redirect('http://localhost:8080/urls/' + shortURL);
 });
 
@@ -134,9 +140,10 @@ app.post("/logout", (req, res) => {
 })
 
 app.get("/urls/:id", (req, res) => {
+  var username = req.cookies['userID']
   let templateVars = {
     shortURL: req.params.id, urlDatabase,
-    username: req.cookies['userID'],
+    username: req.cookies['userID']
     };
   res.render("urls_show", templateVars);
 });
