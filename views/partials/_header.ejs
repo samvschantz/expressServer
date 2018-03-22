@@ -5,7 +5,7 @@
 </head>
 <body>
     <ul>
-      <% if (!username){%>
+      <% if (templateVars = {}){%>
       <form action="http://localhost:8080/login">
         <button>Login</button>
       </form>
@@ -16,8 +16,8 @@
         <form action="/logout" method="POST" style="margin:10px;">
           <button>Logout</button>
         </form>
+        <%=templateVars%>
       <% } %>
-      <%=username%>
     </ul>
 </body>
 </html>

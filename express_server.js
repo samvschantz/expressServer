@@ -3,8 +3,15 @@ var app = express();
 var PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-var cookieParser = require('cookie-parser')
-app.use(cookieParser())
+// switching to cookieSession
+// var cookieParser = require('cookie-parser')
+// app.use(cookieParser())
+var cookieSession = require('cookie-session')
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['googlegoggles'],
+}))
 
 const bcrypt = require('bcrypt');
 // const password = "purple-monkey-dinosaur"; // you will probably this from req.params
@@ -22,36 +29,16 @@ function generateRandomString() {
   return text;
 }
 
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-}
+const users = {};
 
-var urlDatabase = {
-  "userRandomID": {
-    "b2xVn2": "http://www.lighthouselabs.ca",
-  },
- "user2RandomID": {
-  "b2xVn2": "http://www.lighthouselabs.ca",
- }
-};
+var urlDatabase = {};
 
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  res.redirect('http://localhost:8080/urls/');
 });
 
 app.get("/register", (req, res) => {
-  let templateVars = {
-    username: req.cookies['userID']
-  };
+  let templateVars = users
   res.render("urls_register", templateVars)
 });
 
@@ -79,7 +66,7 @@ app.post("/register", (req, res) => {
       password: password
     };
     urlDatabase[userID] = {}
-    res.cookie("userID", userID)
+    req.session.userID = userID
     res.redirect("http://localhost:8080/urls/")
   };
 });
@@ -97,20 +84,20 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let username = req.cookies['userID']
-  let templateVars = {
-    username: req.cookies['userID'],
-    urls: urlDatabase[username]
-  };
-  //the object we are accessing in the loop is urls
+//   let username = req.cookies.userID
+//   let templateVars = {
+//     username: username,
+//     urls: urlDatabase[username]
+//   };
+//   //the object we are accessing in the loop is urls
+  let templateVars = users
   res.render("urls_index", templateVars)
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    username: req.cookies["userID"],
-  };
-  if (req.cookies["userID"] === undefined){
+  let username = req.session.userID
+  let templateVars = users
+  if (req.session.userID === undefined){
     res.redirect("http://localhost:8080/login")
   } else {
     res.render("urls_new", templateVars);
@@ -118,10 +105,10 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  let userID = req.cookies.userID
+  let userID = req.session.userID
   var shortURL = generateRandomString()
   var longURL = req.body.longURL
-  if (urlDatabase[userID] === {}){
+  if (urlDatabase[userID] === {}){                      // TODO: probably not what I wanted
     urlDatabase[userID] = { [shortURL] : longURL }
   } else {
     urlDatabase[userID][shortURL] = longURL
@@ -132,41 +119,38 @@ app.post("/urls", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   var shortURL = req.params.shortURL
   for (person in urlDatabase){
-    var longURL = urlDatabase[person][shortURL]
+    console.log(urlDatabase[person])
   }
-  res.redirect(longURL);
+  res.redirect('http://localhost:8080/urls/');
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("userID")
+
   res.redirect("http://localhost:8080/urls/")
 })
 
 app.get("/urls/:id", (req, res) => {
-  var username = req.cookies['userID']
-  let templateVars = {
-    shortURL: req.params.id, urlDatabase,
-    username: req.cookies['userID']
-    };
+  var username = req.session.userID
+  let templateVars = users
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id
   let longURL = req.body.longURL
-  let userID = req.cookies.userID
+  let userID = req.session.userID
   urlDatabase[userID][shortURL] = longURL
   res.redirect("http://localhost:8080/urls/")
 });
 
 app.post("/login", (req, res) =>{
-  let userID = req.body.userID
+  let userID = req.session.userID
   let email = req.body.email
   let password = req.body.password
   let matchFound = false
   for (var person in users){
     if (users[person]['email'] === email && bcrypt.compareSync(password, users[person]['password'])){
-      res.cookie("userID", users[person]['id'])
+      req.session.userID = users[person]['id']
       matchFound = true
       }
   };
